@@ -121,4 +121,10 @@ public class PR123mainTreballadors {
             throw new IOFitxerExcepcio("Error en escriure el fitxer.", e);
         }
     }
+
+    // Mètode main
+    public static void main(String[] args) {
+        PR123mainTreballadors programa = new PR123mainTreballadors();
+        programa.iniciar();
+    }    
 }
