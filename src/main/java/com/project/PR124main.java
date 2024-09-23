@@ -14,7 +14,6 @@ public class PR124main {
     private static final int ID_SIZE = 4; // Número de registre: 4 bytes
     private static final int NAME_MAX_BYTES = 40; // Nom: màxim 20 caràcters (40 bytes en UTF-8)
     private static final int GRADE_SIZE = 4; // Nota: 4 bytes (float)
-    private static final int RECORD_SIZE = ID_SIZE + NAME_MAX_BYTES + GRADE_SIZE; // Total: 48 bytes per registre
 
     // Posicions dels camps dins el registre
     private static final int NAME_POS = ID_SIZE; // El nom comença just després del número de registre
