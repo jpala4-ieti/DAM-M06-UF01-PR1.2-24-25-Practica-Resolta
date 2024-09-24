@@ -89,4 +89,106 @@ class PR124mainTest {
             assertEquals(48, raf.length());  // Verifica la mida del fitxer
         }
     }
+
+    @Test
+    void testTruncamentNom() throws IOException {
+        // Afegim un estudiant amb un nom molt llarg
+        gestor.afegirEstudiantFitxer(1, "UnNomRealmentMoltLlargQueSuperaEls40Bytes", 7.5f);
+    
+        // Capturar la sortida
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outputStream));
+    
+        try {
+            gestor.llistarEstudiantsFitxer();
+        } finally {
+            System.setOut(originalOut);
+        }
+    
+        String output = outputStream.toString();
+        // Assegurar que el nom ha estat truncat a una longitud màxima raonable
+        assertTrue(output.contains("Registre: 1, Nom: UnNomRealmentMoltLlargQueS"));
+    }
+ 
+    @Test
+    void testLecturaMultiplesRegistres() throws IOException {
+        for (int i = 1; i <= 100; i++) {
+            gestor.afegirEstudiantFitxer(i, "Estudiant" + i, i % 10);
+        }
+    
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outputStream));
+    
+        try {
+            gestor.llistarEstudiantsFitxer();
+        } finally {
+            System.setOut(originalOut);
+        }
+    
+        String output = outputStream.toString();
+        for (int i = 1; i <= 100; i++) {
+            assertTrue(output.contains("Registre: " + i));
+        }
+    }
+
+    @Test
+    void testActualitzarRegistreNoExistent() throws IOException {
+        // Intentem actualitzar un estudiant que no existeix
+        gestor.actualitzarNotaFitxer(999, 5.0f);
+    
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outputStream));
+    
+        try {
+            gestor.consultarNotaFitxer(999);
+        } finally {
+            System.setOut(originalOut);
+        }
+    
+        String output = outputStream.toString();
+        assertTrue(output.contains("No s'ha trobat l'estudiant amb registre: 999"));
+    }
+
+    @Test
+    void testNomsAmbAccentsICaractersEspecials() throws IOException {
+        gestor.afegirEstudiantFitxer(1, "José García", 8.5f);
+        gestor.afegirEstudiantFitxer(2, "Renée O'Connor", 7.5f);
+    
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outputStream));
+    
+        try {
+            gestor.llistarEstudiantsFitxer();
+        } finally {
+            System.setOut(originalOut);
+        }
+    
+        String output = outputStream.toString();
+        assertTrue(output.contains("José García"));
+        assertTrue(output.contains("Renée O'Connor"));
+    }
+
+    @Test
+    void testNomsAmbCaractersXinesos() throws IOException {
+        gestor.afegirEstudiantFitxer(1, "张伟", 9.0f);  // Nom comú en xinès
+        gestor.afegirEstudiantFitxer(2, "王芳", 8.0f);  // Un altre nom comú en xinès
+    
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        PrintStream originalOut = System.out;
+        System.setOut(new PrintStream(outputStream));
+    
+        try {
+            gestor.llistarEstudiantsFitxer();
+        } finally {
+            System.setOut(originalOut);
+        }
+    
+        String output = outputStream.toString();
+        assertTrue(output.contains("张伟"));
+        assertTrue(output.contains("王芳"));
+    }
 }
